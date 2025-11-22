@@ -1,0 +1,30 @@
+disabled_rules:
+  - force_cast
+  - force_unwrapping
+  - todo
+
+opt_in_rules:
+  - opening_brace
+  - empty_count
+  - sorted_imports
+  - trailing_closure
+
+analyzer_rules:
+  - unused_import
+
+line_length: 120
+type_body_length: 200
+function_body_length: 50
+
+excluded:
+  - Pods
+  - Carthage
+  - Scripts
+  - .build
+  - fastlane
+
+trailing_whitespace: warning
+vertical_whitespace: warning
+indentation:
+  width: 4
+  use_tabs: false
