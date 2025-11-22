@@ -8,6 +8,12 @@
 import Foundation
 
 class DefaultCatalogRepository: CatalogRepository {
+    private let session: URLSessionProtocol
+
+    init(session: URLSessionProtocol = URLSession.shared) {
+        self.session = session
+    }
+
     func getCatalog() async -> Result<[Item], APIError> {
         let apiClient: CatalogAPI = .items(sinceId: nil, maxId: nil)
 
@@ -16,7 +22,7 @@ class DefaultCatalogRepository: CatalogRepository {
         }
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await session.data(for: request)
 
             guard let httpResponse = response as? HTTPURLResponse,
                   200..<300 ~= httpResponse.statusCode else {
