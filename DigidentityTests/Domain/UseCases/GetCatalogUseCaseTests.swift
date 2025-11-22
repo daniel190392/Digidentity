@@ -28,6 +28,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
         // Then
         switch result {
         case .success(let items):
+            XCTAssertTrue(mockRepository.getCatalogWasCalled)
             XCTAssertEqual(items.count, 0)
         case .failure:
             XCTFail("Expected success but got failure")
@@ -48,6 +49,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
         case .success:
             XCTFail("Expected failure")
         case .failure(let error):
+            XCTAssertTrue(mockRepository.getCatalogWasCalled)
             XCTAssertNotNil(error)
         case .none:
             XCTFail("Expected failure")
