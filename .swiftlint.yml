@@ -25,6 +25,3 @@ excluded:
 
 trailing_whitespace: warning
 vertical_whitespace: warning
-indentation:
-  width: 4
-  use_tabs: false

@@ -14,6 +14,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
+        initializeGlobalToken()
+
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
@@ -36,4 +38,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) { }
 
     func sceneDidEnterBackground(_ scene: UIScene) { }
+}
+
+private extension SceneDelegate {
+    func initializeGlobalToken() {
+        let keyToken = "Token"
+        if let globalToken = SecureStorage.shared.get(keyToken) {
+            APIRequestBuilder.shared.setGlobalToken(globalToken)
+            return
+        }
+
+        guard let token = Bundle.main.object(forInfoDictionaryKey: "TOKEN") as? String else {
+            print("⚠️ Can't loaded token from Info.plist")
+            return
+        }
+
+        SecureStorage.shared.save(token, for: keyToken)
+        APIRequestBuilder.shared.setGlobalToken(token)
+    }
 }
