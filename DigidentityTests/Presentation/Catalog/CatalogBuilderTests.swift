@@ -48,4 +48,17 @@ final class CatalogBuilderTests: XCTestCase {
         // Assert
         XCTAssertNotNil(viewController)
     }
+
+    func testBuildWithCustomDelegate() {
+        // Given
+        let mockDelegate = MockCatalogViewModelDelegate()
+        let builder = CatalogBuilder()
+            .withDelegate(mockDelegate)
+
+        // Act
+        let viewController = builder.build()
+
+        // Assert
+        XCTAssertNotNil(viewController)
+    }
 }

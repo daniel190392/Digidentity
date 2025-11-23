@@ -71,6 +71,10 @@ class CatalogViewModel {
             handleError(error)
         }
     }
+
+    func selectItem(at index: Int) {
+        delegate?.navigateToItem(items[index])
+    }
 }
 
 private extension CatalogViewModel {

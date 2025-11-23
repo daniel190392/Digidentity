@@ -8,6 +8,12 @@
 import UIKit
 
 class CatalogViewController: UIViewController {
+    private enum Constants {
+        static let screenTitle = "Catalog"
+        static let emptyListMessage = "No Items"
+        static let popupTitle = "Error"
+        static let popupButton = "Ok"
+    }
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +35,6 @@ class CatalogViewController: UIViewController {
     init(viewModel: CatalogViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = .white
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -71,14 +76,14 @@ private extension CatalogViewController {
             activityIndicator.stopAnimating()
             emptyView.isHidden = !items.isEmpty
             if items.isEmpty {
-                emptyView.configure(message: "No Items")
+                emptyView.configure(message: Constants.emptyListMessage)
             }
             tableView.reloadData()
         case .error(let message):
             tableView.isHidden = true
             emptyView.isHidden = true
             activityIndicator.stopAnimating()
-            showPopup(title: "Error", message: message)
+            showPopup(message: message)
         case .loadingMore:
             break
         }
@@ -88,6 +93,8 @@ private extension CatalogViewController {
 // MARK: Setup Layout
 private extension CatalogViewController {
     func setupAutoLayout() {
+        view.backgroundColor = .white
+        title = Constants.screenTitle
         setupTableView()
         setupActivityIndicator()
         setupEmptyView()
@@ -126,9 +133,9 @@ private extension CatalogViewController {
         }
    }
 
-    func showPopup(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+    func showPopup(message: String) {
+        let alert = UIAlertController(title: Constants.popupTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Constants.popupButton, style: .default))
         present(alert, animated: true)
     }
 }
@@ -166,5 +173,9 @@ extension CatalogViewController: UITableViewDelegate {
                 await viewModel.loadNextPage()
             }
         }
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.selectItem(at: indexPath.row)
     }
 }

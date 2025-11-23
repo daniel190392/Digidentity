@@ -14,11 +14,12 @@ import XCTest
 final class CatalogViewModelTests: XCTestCase {
     var sut: CatalogViewModel?
     var mockUseCase = MockGetCatalogUseCase()
-    private var cancellables: Set<AnyCancellable> = []
+    var mockDelegate = MockCatalogViewModelDelegate()
 
     override func setUp() {
         super.setUp()
         sut = CatalogViewModel(getCatalogUseCase: mockUseCase)
+        sut?.delegate = mockDelegate
     }
 
     func testLoadCatalogSuccess() async {
@@ -167,5 +168,54 @@ final class CatalogViewModelTests: XCTestCase {
         } else {
             XCTFail("State should be .error")
         }
+    }
+
+    func testSelectItem() async {
+        // Given
+        let expectedItems = [
+            Item(id: "1", text: "123", confidence: 10.0, image: "image"),
+            Item(id: "2", text: "456", confidence: 10.0, image: "image")
+        ]
+        mockUseCase.resultToReturn = .success(expectedItems)
+        await sut?.loadCatalog()
+
+        // When
+        sut?.selectItem(at: 0)
+
+        // Then
+        XCTAssertTrue(mockDelegate.navigateToItemWasCalled)
+        XCTAssertEqual(mockDelegate.item?.id, "1")
+    }
+
+    func testLoadCatalogSendsLoadingAndLoadedStatesToListener() async {
+        // Given
+        let expectedItems = [
+            Item(id: "1", text: "123", confidence: 10.0, image: "image"),
+            Item(id: "2", text: "456", confidence: 10.0, image: "image")
+        ]
+        mockUseCase.resultToReturn = .success(expectedItems)
+        let loadingExpectation = XCTestExpectation(description: "loading")
+        let loadedExpectation = XCTestExpectation(description: ".loaded")
+        var receivedStates: [CatalogViewModel.CatalogViewState] = []
+
+        sut?.bind { state in
+            receivedStates.append(state)
+            switch state {
+            case .loading:
+                loadingExpectation.fulfill()
+            case .loaded(let items):
+                XCTAssertEqual(items.count, expectedItems.count)
+                loadedExpectation.fulfill()
+            default:
+                break
+            }
+        }
+
+        // When
+        await sut?.loadCatalog()
+
+        // Then
+        await fulfillment(of: [loadingExpectation, loadedExpectation], timeout: 1.0)
+        XCTAssertEqual(receivedStates.count, 2)
     }
 }

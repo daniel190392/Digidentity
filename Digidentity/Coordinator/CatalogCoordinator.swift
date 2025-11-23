@@ -17,12 +17,19 @@ class CatalogCoordinator: Coordinator {
 
     func start() {
         Task { @MainActor in
-            let catalogViewController = CatalogBuilder().build()
+            let catalogViewController = CatalogBuilder()
+                .withDelegate(self)
+                .build()
             navigationController.pushViewController(catalogViewController, animated: false)
         }
     }
 }
 
 extension CatalogCoordinator: CatalogViewModelDelegate {
-    func navigateToItem(_ item: Item) { }
+    func navigateToItem(_ item: Item) {
+        Task { @MainActor in
+            let itemDetailViewController = ItemDetailBuilder().build(item: item)
+            navigationController.pushViewController(itemDetailViewController, animated: false)
+        }
+    }
 }

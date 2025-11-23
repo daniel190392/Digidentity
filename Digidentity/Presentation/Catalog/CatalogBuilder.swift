@@ -10,6 +10,7 @@ import UIKit
 final class CatalogBuilder {
     private var repository: CatalogRepository = DefaultCatalogRepository()
     private lazy var useCase: GetCatalogUseCase = DefaultGetCatalogUseCase(repository: repository)
+    private var delegate: CatalogViewModelDelegate?
 
     func withRepository(_ repository: CatalogRepository) -> Self {
         self.repository = repository
@@ -21,9 +22,15 @@ final class CatalogBuilder {
         return self
     }
 
+    func withDelegate(_ delegate: CatalogViewModelDelegate) -> Self {
+        self.delegate = delegate
+        return self
+    }
+
     @MainActor
     func build() -> CatalogViewController {
         let viewModel = CatalogViewModel(getCatalogUseCase: useCase)
+        viewModel.delegate = delegate
         return CatalogViewController(viewModel: viewModel)
     }
 }
