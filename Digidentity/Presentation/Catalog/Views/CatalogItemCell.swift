@@ -55,6 +55,7 @@ class CatalogItemCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: 15, weight: .bold)
         return label
     }()
+    private var loadImageTask: Task<Void, Never>?
 
     static let reuseIdentifier = "CatalogItemCell"
 
@@ -77,11 +78,19 @@ class CatalogItemCell: UITableViewCell {
     }
 
     func configure(with item: ItemCellViewModel) {
+        loadImageTask?.cancel()
         itemImageView.image = UIImage(systemName: "tray")
         titleLabel.text = item.titleText
         identifierLabel.text = item.idText
         confidenceLabel.text = String(format: "%.2f", item.confidenceValue)
         confidenceLabel.textColor = item.confidenceValue >= 0.5 ? .systemGreen : .systemRed
+        loadImageTask = Task {
+            guard let imageUrl = URL(string: item.image),
+                let image = await ImageLoader.shared.loadImage(imageUrl),
+                !Task.isCancelled
+                else { return }
+            itemImageView.image = image
+        }
     }
 }
 

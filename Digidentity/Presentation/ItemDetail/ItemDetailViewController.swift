@@ -53,6 +53,7 @@ class ItemDetailViewController: UIViewController {
     }()
 
     private let viewModel: ItemDetailViewModel
+    private var loadImageTask: Task<Void, Never>?
 
     init(viewModel: ItemDetailViewModel) {
         self.viewModel = viewModel
@@ -67,6 +68,11 @@ class ItemDetailViewController: UIViewController {
         setupAutoLayout()
         bindViewModel()
         viewModel.loadItem()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        loadImageTask?.cancel()
     }
 }
 
@@ -93,6 +99,15 @@ private extension ItemDetailViewController {
         idLabel.text = item.id
         confidenceLabel.text = String(format: "%.2f", item.confidence)
         confidenceLabel.textColor = item.confidence >= 0.5 ? .systemGreen : .systemRed
+        loadImageTask = Task { [weak self] in
+            guard let self = self else { return }
+
+            guard let url = URL(string: item.image),
+                let image = await ImageLoader.shared.loadImage(url),
+                !Task.isCancelled
+                else { return }
+            self.itemImageView.image = image
+        }
     }
 }
 
