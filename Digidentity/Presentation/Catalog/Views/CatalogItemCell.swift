@@ -26,6 +26,7 @@ class CatalogItemCell: UITableViewCell {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.spacing = Constants.space
+        stack.alignment = .center
         return stack
     }()
     private var itemImageView = UIImageView()
