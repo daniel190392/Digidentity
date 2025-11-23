@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol CatalogViewModelDelegate: AnyObject {
+    func navigateToItem(_ item: Item)
+}
+
 @MainActor
 class CatalogViewModel {
     enum CatalogViewState {
@@ -25,6 +29,8 @@ class CatalogViewModel {
     private var items: [Item] = []
     private var isLoadingMore = false
     private var hasMorePages = true
+
+    weak var delegate: CatalogViewModelDelegate?
 
     init(getCatalogUseCase: GetCatalogUseCase) {
         self.getCatalogUseCase = getCatalogUseCase
