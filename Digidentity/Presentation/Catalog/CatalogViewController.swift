@@ -149,7 +149,7 @@ extension CatalogViewController: UITableViewDataSource {
                                                  for: indexPath) as! CatalogItemCell
         if case .loaded(let items) = viewModel.state {
             let item = items[indexPath.row]
-            cell.configure(with: item)
+            cell.configure(with: item.toItemCellViewModel())
         }
         return cell
     }

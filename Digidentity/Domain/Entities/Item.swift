@@ -11,3 +11,14 @@ struct Item {
     let confidence: Double
     let image: String
 }
+
+extension Item {
+    func toItemCellViewModel() -> ItemCellViewModel {
+        ItemCellViewModel(
+            titleText: text,
+            idText: id,
+            confidenceValue: confidence,
+            image: image
+        )
+    }
+}

@@ -19,6 +19,6 @@ struct ItemDTO: Codable {
 
 extension ItemDTO {
     func toEntity() -> Item {
-        return Item(id: id, text: text, confidence: confidence, image: image)
+        Item(id: id, text: text, confidence: confidence, image: image)
     }
 }
