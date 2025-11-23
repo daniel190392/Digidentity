@@ -11,9 +11,11 @@ import Foundation
 
 final class MockGetCatalogUseCase: GetCatalogUseCase {
     var executeWasCalled: Bool = false
+    var executeCountCalled = 0
     var resultToReturn: Result<[Item], APIError> = .success([])
 
-    func execute() async -> Result<[Item], APIError> {
+    func execute(sinceId: String? = nil, maxId: String? = nil) async -> Result<[Item], APIError> {
+        executeCountCalled += 1
         executeWasCalled = true
         return resultToReturn
     }

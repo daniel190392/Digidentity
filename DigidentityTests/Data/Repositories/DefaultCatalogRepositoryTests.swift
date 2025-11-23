@@ -31,7 +31,7 @@ final class DefaultCatalogRepositoryTests: XCTestCase {
                                                        httpVersion: nil,
                                                        headerFields: nil)
         // When
-        let result = await sut!.getCatalog()
+        let result = await sut!.getCatalog(sinceId: nil, maxId: nil)
 
         // Then
         switch result {
@@ -48,7 +48,7 @@ final class DefaultCatalogRepositoryTests: XCTestCase {
         mockSession.errorToThrow = APIError.badURL
 
         // When
-        let result = await sut!.getCatalog()
+        let result = await sut!.getCatalog(sinceId: nil, maxId: nil)
 
         // Then
         switch result {
@@ -68,7 +68,7 @@ final class DefaultCatalogRepositoryTests: XCTestCase {
                                                        httpVersion: nil,
                                                        headerFields: nil)
         // When
-        let result = await sut!.getCatalog()
+        let result = await sut!.getCatalog(sinceId: nil, maxId: nil)
 
         // Then
         switch result {
@@ -87,7 +87,7 @@ final class DefaultCatalogRepositoryTests: XCTestCase {
                                                        httpVersion: nil,
                                                        headerFields: nil)
         // When
-        let result = await sut!.getCatalog()
+        let result = await sut!.getCatalog(sinceId: nil, maxId: nil)
 
         // Then
         switch result {

@@ -6,7 +6,7 @@
 //
 
 protocol GetCatalogUseCase {
-    func execute() async -> Result<[Item], APIError>
+    func execute(sinceId: String?, maxId: String?) async -> Result<[Item], APIError>
 }
 
 class DefaultGetCatalogUseCase: GetCatalogUseCase {
@@ -16,7 +16,7 @@ class DefaultGetCatalogUseCase: GetCatalogUseCase {
         self.repository = repository
     }
 
-    func execute() async -> Result<[Item], APIError> {
-        return await repository.getCatalog()
+    func execute(sinceId: String? = nil, maxId: String? = nil) async -> Result<[Item], APIError> {
+        return await repository.getCatalog(sinceId: sinceId, maxId: maxId)
     }
 }

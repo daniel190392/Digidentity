@@ -39,6 +39,53 @@ final class CatalogViewModelTests: XCTestCase {
         }
     }
 
+    func testLoadNextPageSuccessAppendsItems() async {
+        // Given
+        let expectedItems = [
+            Item(id: "1", text: "123", confidence: 10.0, image: "image"),
+            Item(id: "2", text: "456", confidence: 10.0, image: "image")
+        ]
+        mockUseCase.resultToReturn = .success(expectedItems)
+        await sut?.loadCatalog()
+        mockUseCase.resultToReturn = .success([Item(id: "3", text: "789", confidence: 10.0, image: "image")])
+
+        // When
+        await sut?.loadNextPage()
+
+        // Then
+        if case .loaded(let items) = sut?.state {
+            XCTAssertTrue(mockUseCase.executeWasCalled)
+            XCTAssertEqual(mockUseCase.executeCountCalled, 2)
+            XCTAssertEqual(items.count, expectedItems.count + 1)
+        } else {
+            XCTFail("State should be .loaded")
+        }
+    }
+
+    func testLoadNextPageSuccessWithEmptyItems() async {
+        // Given
+        let expectedItems = [
+            Item(id: "1", text: "123", confidence: 10.0, image: "image"),
+            Item(id: "2", text: "456", confidence: 10.0, image: "image")
+        ]
+        mockUseCase.resultToReturn = .success(expectedItems)
+        await sut?.loadCatalog()
+        mockUseCase.resultToReturn = .success([])
+
+        // When
+        await sut?.loadNextPage()
+        await sut?.loadNextPage()
+
+        // Then
+        if case .loaded(let items) = sut?.state {
+            XCTAssertTrue(mockUseCase.executeWasCalled)
+            XCTAssertEqual(mockUseCase.executeCountCalled, 2)
+            XCTAssertEqual(items.count, expectedItems.count)
+        } else {
+            XCTFail("State should be .loaded")
+        }
+    }
+
     func testLoadCatalogErrorBadURL() async {
         // Given
         mockUseCase.resultToReturn = .failure(.badURL)
@@ -96,6 +143,27 @@ final class CatalogViewModelTests: XCTestCase {
         // Then
         if case .error(let message) = sut?.state {
             XCTAssertTrue(message.contains("Error de red"))
+        } else {
+            XCTFail("State should be .error")
+        }
+    }
+
+    func testLoadNextPageFailure() async {
+        // Given
+        let expectedItems = [
+            Item(id: "1", text: "123", confidence: 10.0, image: "image"),
+            Item(id: "2", text: "456", confidence: 10.0, image: "image")
+        ]
+        mockUseCase.resultToReturn = .success(expectedItems)
+        await sut?.loadCatalog()
+        mockUseCase.resultToReturn = .failure(.badURL)
+
+        // When
+        await sut?.loadNextPage()
+
+        // Then
+        if case .error(let message) = sut?.state {
+            XCTAssertEqual(message, "La URL es inválida")
         } else {
             XCTFail("State should be .error")
         }

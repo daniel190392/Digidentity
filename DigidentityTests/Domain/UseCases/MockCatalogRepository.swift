@@ -13,7 +13,7 @@ class MockCatalogRepository: CatalogRepository {
     var getCatalogWasCalled: Bool = false
     var result: Result<[Item], APIError>?
 
-    func getCatalog() async -> Result<[Item], APIError> {
+    func getCatalog(sinceId: String? = nil, maxId: String? = nil) async -> Result<[Item], APIError> {
         guard let result else {
             fatalError("Pendind set result")
         }

@@ -14,8 +14,8 @@ class DefaultCatalogRepository: CatalogRepository {
         self.session = session
     }
 
-    func getCatalog() async -> Result<[Item], APIError> {
-        let apiClient: CatalogAPI = .items(sinceId: nil, maxId: nil)
+    func getCatalog(sinceId: String? = nil, maxId: String? = nil) async -> Result<[Item], APIError> {
+        let apiClient: CatalogAPI = .items(sinceId: sinceId, maxId: maxId)
 
         guard let request = APIRequestBuilder.shared.buildRequest(for: apiClient) else {
             return .failure(.badURL)

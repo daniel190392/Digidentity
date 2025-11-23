@@ -6,5 +6,5 @@
 //
 
 protocol CatalogRepository {
-    func getCatalog() async -> Result<[Item], APIError>
+    func getCatalog(sinceId: String?, maxId: String?) async -> Result<[Item], APIError>
 }

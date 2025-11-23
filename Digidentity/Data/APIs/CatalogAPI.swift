@@ -27,6 +27,16 @@ enum CatalogAPI: APIEndpoint {
     }
 
     var queryItems: [URLQueryItem]? {
-        return nil
+        switch self {
+        case .items(let sinceId, let maxId):
+            var params: [URLQueryItem] = []
+            if let sinceId = sinceId {
+                params.append(URLQueryItem(name: "since_id", value: sinceId))
+            }
+            if let maxId = maxId {
+                params.append(URLQueryItem(name: "max_id", value: maxId))
+            }
+            return params.isEmpty ? nil : params
+        }
     }
 }

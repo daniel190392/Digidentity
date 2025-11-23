@@ -5,12 +5,9 @@
 //  Created by Daniel Salhuana on 22/11/25.
 //
 
-import Combine
 import UIKit
 
 class CatalogViewController: UIViewController {
-    private let viewModel: CatalogViewModel
-    private var cancellables = Set<AnyCancellable>()
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
@@ -26,6 +23,8 @@ class CatalogViewController: UIViewController {
         return indicator
     }()
     private let emptyView = EmptyCatalogView()
+
+    private let viewModel: CatalogViewModel
 
     init(viewModel: CatalogViewModel) {
         self.viewModel = viewModel
@@ -52,12 +51,9 @@ class CatalogViewController: UIViewController {
 // MARK: Binding
 private extension CatalogViewController {
     func bindViewModel() {
-        viewModel.$state
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                self?.render(state: state)
-            }
-            .store(in: &cancellables)
+        viewModel.bind { [weak self] state in
+            self?.render(state: state)
+        }
     }
 
     func render(state: CatalogViewModel.CatalogViewState) {
@@ -83,6 +79,8 @@ private extension CatalogViewController {
             emptyView.isHidden = true
             activityIndicator.stopAnimating()
             showPopup(title: "Error", message: message)
+        case .loadingMore:
+            break
         }
     }
 }
@@ -156,4 +154,17 @@ extension CatalogViewController: UITableViewDataSource {
 }
 
 // MARK: UITableViewDelegate
-extension CatalogViewController: UITableViewDelegate { }
+extension CatalogViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView,
+                   willDisplay cell: UITableViewCell,
+                   forRowAt indexPath: IndexPath) {
+        guard case .loaded(let items) = viewModel.state else { return }
+
+        let lastIndex = items.count - 1
+        if indexPath.row == lastIndex {
+            Task {
+                await viewModel.loadNextPage()
+            }
+        }
+    }
+}

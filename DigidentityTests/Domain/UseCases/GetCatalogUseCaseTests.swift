@@ -23,7 +23,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
         mockRepository.result = .success([])
 
         // When
-        let result = await sut?.execute()
+        let result = await sut?.execute(sinceId: nil, maxId: nil)
 
         // Then
         switch result {
@@ -42,7 +42,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
         mockRepository.result = .failure(APIError.badURL)
 
         // When
-        let result = await sut?.execute()
+        let result = await sut?.execute(sinceId: nil, maxId: nil)
 
         // Then
         switch result {
