@@ -5,6 +5,7 @@
 //  Created by Daniel Salhuana on 23/11/25.
 //
 
+import SwiftData
 import UIKit
 import XCTest
 
@@ -15,11 +16,15 @@ final class CatalogCoordinatorTests: XCTestCase {
 
     var sut: CatalogCoordinator!
     var mockNavigationController: MockNavigationController!
+    var container: ModelContainer!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        container = try ModelContainer(for: ItemEntity.self, configurations: config)
         mockNavigationController = MockNavigationController()
-        sut = CatalogCoordinator(navigationController: mockNavigationController)
+        sut = CatalogCoordinator(navigationController: mockNavigationController,
+                                 modelContainer: container)
     }
 
     func test_start_buildsViewControllerAndPushesIt() async throws {

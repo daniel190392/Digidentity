@@ -11,16 +11,20 @@ import XCTest
 
 final class GetCatalogUseCaseTests: XCTestCase {
     var sut: GetCatalogUseCase?
-    var mockRepository = MockCatalogRepository()
+    var mockRemoteRepository = MockRemoteCatalogRepository()
+    var mockLocalRepository = MockLocalCatalogRepository()
+    var mockNetworkChecking = MockNetworkChecking()
 
     override func setUp() {
         super.setUp()
-        sut = DefaultGetCatalogUseCase(repository: mockRepository)
+        sut = DefaultGetCatalogUseCase(remoteRepository: mockRemoteRepository,
+                                       localRepository: mockLocalRepository,
+                                       networkChecker: mockNetworkChecking)
     }
 
     func testUseCaseSuccess() async {
         // Given
-        mockRepository.result = .success([])
+        mockRemoteRepository.result = .success([])
 
         // When
         let result = await sut?.execute(sinceId: nil, maxId: nil)
@@ -28,7 +32,30 @@ final class GetCatalogUseCaseTests: XCTestCase {
         // Then
         switch result {
         case .success(let items):
-            XCTAssertTrue(mockRepository.getCatalogWasCalled)
+            XCTAssertTrue(mockRemoteRepository.getCatalogWasCalled)
+            XCTAssertEqual(items.count, 0)
+        case .failure:
+            XCTFail("Expected success but got failure")
+        case .none:
+            XCTFail("Expected success")
+        }
+    }
+
+    func testUseCaseSuccessWithLocalData() async {
+        // Given
+        mockNetworkChecking.isConnected = false
+        try? await mockLocalRepository.save(items: [])
+
+        // When
+        let result = await sut?.execute(sinceId: nil, maxId: nil)
+        let saveItemsWasCalled = await mockLocalRepository.saveItemsWasCalled
+        let getCatalogWasCalled = await mockLocalRepository.getCatalogWasCalled
+
+        // Then
+        switch result {
+        case .success(let items):
+            XCTAssertTrue(saveItemsWasCalled)
+            XCTAssertTrue(getCatalogWasCalled)
             XCTAssertEqual(items.count, 0)
         case .failure:
             XCTFail("Expected success but got failure")
@@ -39,7 +66,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
 
     func testUseCaseError() async {
         // Given
-        mockRepository.result = .failure(APIError.badURL)
+        mockRemoteRepository.result = .failure(APIError.badURL)
 
         // When
         let result = await sut?.execute(sinceId: nil, maxId: nil)
@@ -49,7 +76,7 @@ final class GetCatalogUseCaseTests: XCTestCase {
         case .success:
             XCTFail("Expected failure")
         case .failure(let error):
-            XCTAssertTrue(mockRepository.getCatalogWasCalled)
+            XCTAssertTrue(mockRemoteRepository.getCatalogWasCalled)
             XCTAssertNotNil(error)
         case .none:
             XCTFail("Expected failure")

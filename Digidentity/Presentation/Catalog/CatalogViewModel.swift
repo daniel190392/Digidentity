@@ -20,6 +20,13 @@ class CatalogViewModel {
         case loaded([Item])
         case error(String)
     }
+    private enum Constants {
+        static let badUrl = "We cannot reach the server. Please try again later."
+        static let badServerResponse = "There was a problem with the server. Please try again later."
+        static let decodingError = "We received unexpected data from the server. Please try again later."
+        static let networkError = "There was a network problem. Check your connection and try again."
+        static let databaseError = "We could not access local data. Please try again later."
+    }
 
     private let getCatalogUseCase: GetCatalogUseCase
     private(set) var state: CatalogViewState = .none {
@@ -82,19 +89,19 @@ private extension CatalogViewModel {
         switch error {
         case .badURL:
             print("The URL is invalid")
-            state = .error("We cannot reach the server. Please try again later.")
+            state = .error(Constants.badUrl)
         case .badServerResponse(let code):
             print("Server response: \(code)")
-            state = .error("There was a problem with the server. Please try again later.")
+            state = .error(Constants.badServerResponse)
         case .decodingError(let underlying):
             print("Decoding error: \(underlying.localizedDescription)")
-            state = .error("We received unexpected data from the server. Please try again later.")
+            state = .error(Constants.decodingError)
         case .networkError(let underlying):
             print("Network error: \(underlying.localizedDescription)")
-            state = .error("There was a network problem. Check your connection and try again.")
+            state = .error(Constants.networkError)
         case .databaseError(underlying: let underlying):
             print("Database error: \(underlying.localizedDescription)")
-            state = .error("We could not access local data. Please try again later.")
+            state = .error(Constants.databaseError)
         }
     }
 }

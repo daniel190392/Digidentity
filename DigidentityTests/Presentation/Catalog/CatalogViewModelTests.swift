@@ -12,6 +12,14 @@ import XCTest
 
 @MainActor
 final class CatalogViewModelTests: XCTestCase {
+    private enum Constants {
+        static let badUrl = "We cannot reach the server. Please try again later."
+        static let badServerResponse = "There was a problem with the server. Please try again later."
+        static let decodingError = "We received unexpected data from the server. Please try again later."
+        static let networkError = "There was a network problem. Check your connection and try again."
+        static let databaseError = "We could not access local data. Please try again later."
+    }
+
     var sut: CatalogViewModel?
     var mockUseCase = MockGetCatalogUseCase()
     var mockDelegate = MockCatalogViewModelDelegate()
@@ -96,7 +104,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         if case .error(let message) = sut?.state {
-            XCTAssertEqual(message, "La URL es inválida")
+            XCTAssertEqual(message, Constants.badUrl)
         } else {
             XCTFail("State should be .error")
         }
@@ -111,7 +119,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         if case .error(let message) = sut?.state {
-            XCTAssertEqual(message, "Respuesta del servidor: 500")
+            XCTAssertEqual(message, Constants.badServerResponse)
         } else {
             XCTFail("State should be .error")
         }
@@ -127,7 +135,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         if case .error(let message) = sut?.state {
-            XCTAssertTrue(message.contains("Error al decodificar"))
+            XCTAssertTrue(message.contains(Constants.decodingError))
         } else {
             XCTFail("State should be .error")
         }
@@ -143,7 +151,23 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         if case .error(let message) = sut?.state {
-            XCTAssertTrue(message.contains("Error de red"))
+            XCTAssertTrue(message.contains(Constants.networkError))
+        } else {
+            XCTFail("State should be .error")
+        }
+    }
+
+    func testLoadCatalogErrorDatabaseError() async {
+        // Given
+        let underlyingError = NSError(domain: "database", code: -1009)
+        mockUseCase.resultToReturn = .failure(.databaseError(underlying: underlyingError))
+
+        // When
+        await sut?.loadCatalog()
+
+        // Then
+        if case .error(let message) = sut?.state {
+            XCTAssertTrue(message.contains(Constants.databaseError))
         } else {
             XCTFail("State should be .error")
         }
@@ -164,7 +188,7 @@ final class CatalogViewModelTests: XCTestCase {
 
         // Then
         if case .error(let message) = sut?.state {
-            XCTAssertEqual(message, "La URL es inválida")
+            XCTAssertEqual(message, Constants.badUrl)
         } else {
             XCTFail("State should be .error")
         }

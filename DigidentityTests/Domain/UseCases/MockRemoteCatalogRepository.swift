@@ -9,7 +9,7 @@ import Foundation
 
 @testable import Digidentity
 
-class MockCatalogRepository: CatalogRepository {
+class MockRemoteCatalogRepository: CatalogRepository {
     var getCatalogWasCalled: Bool = false
     var result: Result<[Item], APIError>?
 
