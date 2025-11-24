@@ -22,35 +22,38 @@ The project structure is organized around features and core infrastructure:
 ```
 Digidentity/
 ├── Digidentity/
-│ ├── Application/
-│ │ ├── AppDelegate.swift
-│ │ └── SceneDelegate.swift # Window setup and AppCoordinator initialization
+│ ├── AppDelegate.swift
+│ ├── SceneDelegate.swift
 │ │
-│ ├── Common/
-│ │ ├── Protocols/ # Generic Protocols (e.g., Bindable)
-│ │ └── Extensions/
+│ ├── Coordinator/
+│ │ ├── AppCoordinator.swift
+│ │ └── CatalogCoordinator.swift
 │ │
-│ ├── Features/ # Application-specific logic
-│ │ └── Catalog/ # (Example of a Feature)
-│ │ ├── Presentation/
-│ │ │ ├── CatalogViewController.swift
-│ │ │ └── CatalogViewModel.swift (with @MainActor)
-│ │ ├── Domain/
-│ │ │ ├── UseCases/ # Business interfaces
-│ │ │ └── Entities/ # Item (Domain Model)
-│ │ └── Data/
-│ │ ├── Repositories/ # LocalCatalogRepository (the SwiftData actor)
-│ │ └── DTOs/ # ItemDTO (Networking)
+│ ├── Data/
+│ │ ├── APIs/ # Characteristic of the API
+│ │ ├── DTOs/ # ItemDTO (Networking)
+│ │ ├── Local/ # Keychain (Storage) / DB Entities
+│ │ ├── Remote/ # Networking
+│ │ └── Repositories/ # Implementations
 │ │
-│ ├── Infrastructure/
-│ │ ├── Coordinators/ # AppCoordinator, CatalogCoordinator
-│ │ ├── Networking/ # APIRequestBuilder, ImageLoader, etc.
-│ │ ├── Persistency/ # ModelContainer, SwiftData Models (ItemEntity)
-│ │ └── Security/ # SecureStorage
+│ ├── Domain/
+│ │ ├── Entities/ # Item
+│ │ ├── Repositories/ # Protocols
+│ │ └── UseCases/ # Business interfaces
 │ │
-│ └── Resources/
-├── DigidentityTests/ # Unit Tests
-└── XcodeConfigs/ # Build Configuration (Secrets.xcconfig)
+│ └── Presentation/
+│   └── Catalog/ # (Feature)
+│   │ ├── CatalogBuilder.swift
+│   │ ├── CatalogViewController.swift
+│   │ └── CatalogViewModel.swift/ # (with @MainActor)
+│   │ └── Views / # Child Views
+│   ├── ItemDetail/
+│   │ ├── ItemDetailBuilder.swift
+│   │ ├── ItemDetailViewController.swift
+│   │ └── ItemDetailViewModel.swift/ # (with @MainActor)
+│   └── Shared/ # ImageLoader
+│
+└── DigidentityTests/ # Unit Tests
 ```
 
 ---
