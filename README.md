@@ -19,6 +19,7 @@ The project is designed to be modular, loosely coupled, and thread-safe:
 
 The project structure is organized around features and core infrastructure:
 
+```
 Digidentity/
 ├── Digidentity/
 │ ├── Application/
@@ -50,6 +51,7 @@ Digidentity/
 │ └── Resources/
 ├── DigidentityTests/ # Unit Tests
 └── XcodeConfigs/ # Build Configuration (Secrets.xcconfig)
+```
 
 ---
 
@@ -79,7 +81,10 @@ API_TOKEN = $(CI_API_TOKEN_SECRET)
 
 ### 3. Link Secrets.xcconfig to Target
 
-Ensure the project knows to read this configuration file during the build process
+Ensure the project knows to read this configuration file during the build process:
+
+1.  Navigate to Project > Info tab.
+2.  In the Configurations section, select Secrets.xcconfig for your main Target (Digidentity) under both Debug and Release.
 
 ### 4. Configure `Info.plist` (The Bridge)
 
