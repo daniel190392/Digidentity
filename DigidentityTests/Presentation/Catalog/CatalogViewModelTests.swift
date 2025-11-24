@@ -64,6 +64,7 @@ final class CatalogViewModelTests: XCTestCase {
         // Then
         if case .loaded(let items) = sut?.state {
             XCTAssertTrue(mockUseCase.executeWasCalled)
+            XCTAssertEqual(mockUseCase.maxId, "2")
             XCTAssertEqual(mockUseCase.executeCountCalled, 2)
             XCTAssertEqual(items.count, expectedItems.count + 1)
         } else {
@@ -241,5 +242,51 @@ final class CatalogViewModelTests: XCTestCase {
         // Then
         await fulfillment(of: [loadingExpectation, loadedExpectation], timeout: 1.0)
         XCTAssertEqual(receivedStates.count, 2)
+    }
+
+    func testUpdateWithNewItemsSuccessfull() async {
+        // Given
+        let initialItems = [Item(id: "2", text: "123", confidence: 10.0, image: "image")]
+        mockUseCase.resultToReturn = .success(initialItems)
+        await sut?.loadCatalog()
+        let newItems = [Item(id: "1", text: "1", confidence: 0.0, image: "image")]
+        mockUseCase.resultToReturn = .success(newItems)
+
+        // When
+        await sut?.updateWithNewItems()
+
+        // Then
+        XCTAssertEqual(mockUseCase.executeCountCalled, 2)
+        XCTAssertEqual(mockUseCase.sinceId, "2")
+        XCTAssertNil(mockUseCase.maxId)
+
+        if case .loaded(let loadedItems) = sut?.state {
+            XCTAssertEqual(loadedItems.count, 2)
+        } else {
+            XCTFail("State should be success")
+        }
+    }
+
+    func testUpdateWithNewItemsHandlesDuplicatesItems() async {
+        // Given
+        let initialItems = [Item(id: "1", text: "2", confidence: 10.0, image: "image")]
+        mockUseCase.resultToReturn = .success(initialItems)
+        await sut?.loadCatalog()
+        let newItems = [Item(id: "1", text: "1", confidence: 0.0, image: "image")]
+        mockUseCase.resultToReturn = .success(newItems)
+
+        // When
+        await sut?.updateWithNewItems()
+
+        // Then
+        XCTAssertEqual(mockUseCase.executeCountCalled, 2)
+        XCTAssertEqual(mockUseCase.sinceId, "1")
+        XCTAssertNil(mockUseCase.maxId)
+
+        if case .loaded(let loadedItems) = sut?.state {
+            XCTAssertEqual(loadedItems.count, 1)
+        } else {
+            XCTFail("State should be success")
+        }
     }
 }

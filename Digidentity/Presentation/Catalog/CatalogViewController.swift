@@ -29,6 +29,7 @@ class CatalogViewController: UIViewController {
         return indicator
     }()
     private let emptyView = EmptyCatalogView()
+    private let refreshControl = UIRefreshControl()
 
     private let viewModel: CatalogViewModel
 
@@ -90,12 +91,24 @@ private extension CatalogViewController {
     }
 }
 
+// MARK: Pull to Refresh
+private extension CatalogViewController {
+    @objc
+    func refreshCatalogData(_ sender: Any) {
+        Task {
+            await viewModel.updateWithNewItems()
+            refreshControl.endRefreshing()
+        }
+    }
+}
+
 // MARK: Setup Layout
 private extension CatalogViewController {
     func setupAutoLayout() {
         view.backgroundColor = .white
         title = Constants.screenTitle
         setupTableView()
+        setupRefreshControl()
         setupActivityIndicator()
         setupEmptyView()
     }
@@ -108,6 +121,13 @@ private extension CatalogViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+
+    func setupRefreshControl() {
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshCatalogData(_:)), for: .valueChanged)
+        refreshControl.attributedTitle = NSAttributedString(string: "Updating ....")
+        tableView.backgroundColor = .systemBackground
     }
 
     func setupActivityIndicator() {

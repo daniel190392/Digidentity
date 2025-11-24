@@ -79,6 +79,28 @@ class CatalogViewModel {
         }
     }
 
+    func updateWithNewItems() async {
+        guard let firstId = items.first?.id, !isLoadingMore, hasMorePages else { return }
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+        state = .loadingMore(items)
+
+        let result = await getCatalogUseCase.execute(sinceId: firstId, maxId: nil)
+
+        switch result {
+        case .success(let newItems):
+            let existingIds = Set(items.map { $0.id })
+            let uniqueNewItems = newItems.filter { item in
+                !existingIds.contains(item.id)
+            }
+            hasMorePages = !uniqueNewItems.isEmpty
+            items.insert(contentsOf: uniqueNewItems, at: 0)
+            state = .loaded(items)
+        case .failure(let error):
+            handleError(error)
+        }
+    }
+
     func selectItem(at index: Int) {
         delegate?.navigateToItem(items[index])
     }
