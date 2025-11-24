@@ -5,22 +5,28 @@
 //  Created by Daniel Salhuana on 23/11/25.
 //
 
+import SwiftData
 import UIKit
 
 class CatalogCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
+    private let modelContainer: ModelContainer
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, modelContainer: ModelContainer) {
         self.navigationController = navigationController
+        self.modelContainer = modelContainer
     }
 
     func start() {
-        Task { @MainActor in
-            let catalogViewController = CatalogBuilder()
-                .withDelegate(self)
-                .build()
-            navigationController.pushViewController(catalogViewController, animated: false)
+        Task {
+            let builder = await CatalogBuilder(modelContainer: modelContainer)
+            await MainActor.run {
+                let catalogViewController = builder
+                    .withDelegate(self)
+                    .build()
+                navigationController.pushViewController(catalogViewController, animated: false)
+            }
         }
     }
 }

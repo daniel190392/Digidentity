@@ -81,13 +81,20 @@ private extension CatalogViewModel {
     func handleError(_ error: APIError) {
         switch error {
         case .badURL:
-            state = .error("La URL es inválida")
+            print("The URL is invalid")
+            state = .error("We cannot reach the server. Please try again later.")
         case .badServerResponse(let code):
-            state = .error("Respuesta del servidor: \(code)")
+            print("Server response: \(code)")
+            state = .error("There was a problem with the server. Please try again later.")
         case .decodingError(let underlying):
-            state = .error("Error al decodificar: \(underlying.localizedDescription)")
+            print("Decoding error: \(underlying.localizedDescription)")
+            state = .error("We received unexpected data from the server. Please try again later.")
         case .networkError(let underlying):
-            state = .error("Error de red: \(underlying.localizedDescription)")
+            print("Network error: \(underlying.localizedDescription)")
+            state = .error("There was a network problem. Check your connection and try again.")
+        case .databaseError(underlying: let underlying):
+            print("Database error: \(underlying.localizedDescription)")
+            state = .error("We could not access local data. Please try again later.")
         }
     }
 }

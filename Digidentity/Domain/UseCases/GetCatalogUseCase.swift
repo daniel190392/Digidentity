@@ -10,13 +10,31 @@ protocol GetCatalogUseCase {
 }
 
 class DefaultGetCatalogUseCase: GetCatalogUseCase {
-    private let repository: CatalogRepository
+    private let remoteRepository: CatalogRepository
+    private let localRepository: CatalogRepository & LocalPersisting
+    private let networkChecker: NetworkChecking
 
-    init(repository: CatalogRepository) {
-        self.repository = repository
+    init(remoteRepository: CatalogRepository,
+         localRepository: CatalogRepository & LocalPersisting,
+         networkChecker: NetworkChecking = NetworkMonitor.shared) {
+        self.remoteRepository = remoteRepository
+        self.localRepository = localRepository
+        self.networkChecker = networkChecker
     }
 
     func execute(sinceId: String? = nil, maxId: String? = nil) async -> Result<[Item], APIError> {
-        return await repository.getCatalog(sinceId: sinceId, maxId: maxId)
+        if networkChecker.isConnected {
+            let result = await remoteRepository.getCatalog(sinceId: sinceId, maxId: maxId)
+            if case .success(let items) = result {
+                do {
+                    try await localRepository.save(items: items)
+                } catch {
+                    print("Error saving items to DB: \(error)")
+                }
+            }
+            return result
+        } else {
+            return await localRepository.getCatalog(sinceId: sinceId, maxId: maxId)
+        }
     }
 }

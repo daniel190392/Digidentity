@@ -5,15 +5,30 @@
 //  Created by Daniel Salhuana on 22/11/25.
 //
 
+import SwiftData
 import UIKit
 
 final class CatalogBuilder {
-    private var repository: CatalogRepository = DefaultCatalogRepository()
-    private lazy var useCase: GetCatalogUseCase = DefaultGetCatalogUseCase(repository: repository)
+    private let modelContainer: ModelContainer
+    private var remoteRepository: CatalogRepository
+    private var localRepository: CatalogRepository & LocalPersisting
+    private lazy var useCase: GetCatalogUseCase = DefaultGetCatalogUseCase(remoteRepository: remoteRepository,
+                                                                           localRepository: localRepository)
     private var delegate: CatalogViewModelDelegate?
 
-    func withRepository(_ repository: CatalogRepository) -> Self {
-        self.repository = repository
+    init(modelContainer: ModelContainer) async {
+        self.modelContainer = modelContainer
+        self.remoteRepository = RemoteCatalogRepository()
+        self.localRepository = LocalCatalogRepository(modelContainer: modelContainer)
+    }
+
+    func withRemoteRepository(_ remoteRepository: CatalogRepository) -> Self {
+        self.remoteRepository = remoteRepository
+        return self
+    }
+
+    func withLocalRepository(_ localRepository: CatalogRepository & LocalPersisting) -> Self {
+        self.localRepository = localRepository
         return self
     }
 

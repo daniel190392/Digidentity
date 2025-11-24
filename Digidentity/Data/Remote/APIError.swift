@@ -10,4 +10,5 @@ enum APIError: Error {
     case badServerResponse(statusCode: Int)
     case decodingError(underlying: Error)
     case networkError(underlying: Error)
+    case databaseError(underlying: Error)
 }

@@ -1,5 +1,5 @@
 //
-//  DefaultCatalogRepository.swift
+//  RemoteCatalogRepository.swift
 //  Digidentity
 //
 //  Created by Daniel Salhuana on 22/11/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DefaultCatalogRepository: CatalogRepository {
+class RemoteCatalogRepository: CatalogRepository {
     private let session: URLSessionProtocol
 
     init(session: URLSessionProtocol = URLSession.shared) {

@@ -94,7 +94,7 @@ private extension ItemDetailViewController {
     }
 
     func configure(with item: Item) {
-        itemImageView.image = UIImage(systemName: "tray")
+        itemImageView.image = UIImage(systemName: "photo.fill")
         titleLabel.text = item.text
         idLabel.text = item.id
         confidenceLabel.text = String(format: "%.2f", item.confidence)

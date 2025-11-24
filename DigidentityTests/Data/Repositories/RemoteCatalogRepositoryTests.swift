@@ -1,5 +1,5 @@
 //
-//  DefaultCatalogRepositoryTests.swift
+//  RemoteCatalogRepositoryTests.swift
 //  Digidentity
 //
 //  Created by Daniel Salhuana on 22/11/25.
@@ -9,13 +9,13 @@ import XCTest
 
 @testable import Digidentity
 
-final class DefaultCatalogRepositoryTests: XCTestCase {
+final class RemoteCatalogRepositoryTests: XCTestCase {
     var sut: CatalogRepository?
     var mockSession = MockSession()
 
     override func setUp() {
         super.setUp()
-        sut = DefaultCatalogRepository(session: mockSession)
+        sut = RemoteCatalogRepository(session: mockSession)
     }
 
     func testSUT() {

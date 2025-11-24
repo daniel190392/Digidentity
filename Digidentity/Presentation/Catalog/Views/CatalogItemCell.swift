@@ -80,7 +80,7 @@ class CatalogItemCell: UITableViewCell {
 
     func configure(with item: ItemCellViewModel) {
         loadImageTask?.cancel()
-        itemImageView.image = UIImage(systemName: "tray")
+        itemImageView.image = UIImage(systemName: "photo.fill")
         titleLabel.text = item.titleText
         identifierLabel.text = item.idText
         confidenceLabel.text = String(format: "%.2f", item.confidenceValue)
