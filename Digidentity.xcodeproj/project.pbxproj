@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8A0AA0F12ED49961002349B5 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8A0AA0F02ED49961002349B5 /* Secrets.xcconfig */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8A9F9A862ED1FBCA006D464D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -17,6 +21,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8A0AA0F02ED49961002349B5 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		8A9F9A262ED1F3B9006D464D /* Digidentity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Digidentity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A9F9A822ED1FBCA006D464D /* DigidentityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DigidentityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -68,6 +73,7 @@
 		8A9F9A1D2ED1F3B9006D464D = {
 			isa = PBXGroup;
 			children = (
+				8A0AA0F02ED49961002349B5 /* Secrets.xcconfig */,
 				8A9F9A282ED1F3B9006D464D /* Digidentity */,
 				8A9F9A832ED1FBCA006D464D /* DigidentityTests */,
 				8A9F9A272ED1F3B9006D464D /* Products */,
@@ -179,6 +185,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A0AA0F12ED49961002349B5 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +249,7 @@
 		8A9F9A502ED1F3BB006D464D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_TOKEN = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -274,6 +282,7 @@
 		8A9F9A512ED1F3BB006D464D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_TOKEN = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -305,6 +314,7 @@
 		};
 		8A9F9A522ED1F3BB006D464D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8A0AA0F02ED49961002349B5 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -369,6 +379,7 @@
 		};
 		8A9F9A532ED1F3BB006D464D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8A0AA0F02ED49961002349B5 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

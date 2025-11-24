@@ -44,17 +44,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 
 private extension SceneDelegate {
+    enum AppSecrets {
+        static let apiToken: String = {
+            guard let token = Bundle.main.object(forInfoDictionaryKey: "API_TOKEN") as? String,
+                  !token.isEmpty else {
+                fatalError("API Token must be set via xcconfig in Build Settings.")
+            }
+            return token
+        }()
+    }
+
     func initializeGlobalToken() {
         let keyToken = "Token"
+
         if let globalToken = SecureStorage.shared.get(keyToken) {
             APIRequestBuilder.shared.setGlobalToken(globalToken)
             return
         }
 
-        guard let token = Bundle.main.object(forInfoDictionaryKey: "TOKEN") as? String else {
-            print("⚠️ Can't loaded token from Info.plist")
-            return
-        }
+        let token = AppSecrets.apiToken
 
         SecureStorage.shared.save(token, for: keyToken)
         APIRequestBuilder.shared.setGlobalToken(token)
